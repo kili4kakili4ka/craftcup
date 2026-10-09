@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CraftCup — Твой кофе, твоё творение</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="logo">
+    <img src="images/logo.png" alt="CraftCup">
+    <span>CraftCup</span>
+  </a>
+  <nav class="nav">
+    <a href="menu.html">Меню</a>
+    <a href="constructor.html">Конструктор</a>
+    <a href="about.html">О кофейне</a>
+  </nav>
+  <div class="header-icons">
+    <a href="cart.html" class="icon-btn" title="Корзина">
+      <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5a3 3 0 016 0v2"/></svg>
+      <span class="cart-count"></span>
+    </a>
+    <button class="icon-btn" data-profile-btn title="Личный кабинет">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+    </button>
+    <button class="burger" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Твой кофе — твоё творение:<br>выбери или собери сам!</h1>
+        <div class="hero-actions">
+          <a href="menu.html" class="btn">Меню</a>
+          <span class="or">or</span>
+          <a href="constructor.html" class="btn">Конструктор</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="images/кофе главная страница.png" alt="Чашка кофе">
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <hr>
+  <p class="footer-text">CraftCup © 2026</p>
+</footer>
+
+<!-- МОДАЛКА АВТОРИЗАЦИИ -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('authModal')">×</button>
+    <h3>Вход в CraftCup</h3>
+    <h4>Введите телефон и имя</h4>
+    <form id="authForm">
+      <input type="tel" id="authPhone" class="modal-input" placeholder="Номер телефона" required>
+      <input type="text" id="authName" class="modal-input" placeholder="Имя" required>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-sm">Войти</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script src="js/menu.js"></script>
+</body>
+</html>
+
+<script src="js/main.js"></script>
+</body>
+</html>

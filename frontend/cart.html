@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Корзина — CraftCup</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="logo">
+    <img src="images/logo.png" alt="CraftCup"><span>CraftCup</span>
+  </a>
+  <nav class="nav">
+    <a href="menu.html">Меню</a>
+    <a href="constructor.html">Конструктор</a>
+    <a href="about.html">О кофейне</a>
+  </nav>
+  <div class="header-icons">
+    <a href="cart.html" class="icon-btn">
+      <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5a3 3 0 016 0v2"/></svg>
+      <span class="cart-count"></span>
+    </a>
+    <button class="icon-btn" data-profile-btn>
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+    </button>
+    <button class="burger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main class="container cart-page" id="cartRoot"></main>
+
+<footer class="footer">
+  <hr>
+  <p class="footer-text">CraftCup © 2026</p>
+</footer>
+
+<!-- ============ МОДАЛКА ОФОРМЛЕНИЯ ЗАКАЗА ============ -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('checkoutModal')">×</button>
+    <h3>Оформление заказа</h3>
+    <h4>Укажите детали — и мы начнём готовить</h4>
+
+    <div class="checkout-summary" id="checkoutSummary"></div>
+
+    <label class="checkout-label">Точка самовывоза</label>
+    <div class="select-wrap">
+      <select id="checkoutLocation">
+        <option value="Арбат, 12">CraftCup на Арбате — ул. Арбат, 12</option>
+        <option value="Тверская, 8">CraftCup на Тверской — ул. Тверская, 8</option>
+        <option value="Покровка, 27">CraftCup на Покровке — ул. Покровка, 27</option>
+      </select>
+    </div>
+
+    <label class="checkout-label">Время готовности</label>
+    <div class="select-wrap">
+      <select id="checkoutTime">
+        <option value="asap">Как можно скорее (~10 мин)</option>
+        <option value="15">Через 15 минут</option>
+        <option value="30">Через 30 минут</option>
+        <option value="60">Через 1 час</option>
+      </select>
+    </div>
+
+    <label class="checkout-label">Комментарий к заказу</label>
+    <input type="text" id="checkoutComment" class="modal-input"
+           placeholder="Например: без сахара, с собой">
+
+    <label class="checkout-label">Оплата</label>
+    <div class="checkout-card" id="checkoutCardInfo"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('checkoutModal')">Отмена</button>
+      <button class="btn btn-sm" id="confirmOrderBtn">Подтвердить заказ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ МОДАЛКА "НЕТ КАРТ" ============ -->
+<div class="modal-overlay" id="noCardModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('noCardModal')">×</button>
+    <h3>Нужна привязанная карта</h3>
+    <h4>Для оформления заказа добавьте карту в личном кабинете</h4>
+    <p class="description">
+      Оплата проходит по привязанной карте. Добавьте её один раз — и сможете
+      оформлять заказы в один клик.
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('noCardModal')">Позже</button>
+      <button class="btn btn-sm" onclick="goToProfile()">Добавить карту</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ МОДАЛКА АВТОРИЗАЦИИ ============ -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('authModal')">×</button>
+    <h3>Вход в CraftCup</h3>
+    <h4>Для оформления заказа войдите</h4>
+    <form id="authForm">
+      <input type="tel" id="authPhone" class="modal-input" placeholder="Номер телефона" required>
+      <input type="text" id="authName" class="modal-input" placeholder="Имя" required>
+      <div class="modal-actions"><button class="btn btn-sm" type="submit">Войти</button></div>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script src="js/menu.js"></script>
+</body>
+</html>
+
+<script src="js/main.js"></script>
+<script src="js/cart.js"></script>
+</body>
+</html>

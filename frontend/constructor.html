@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Конструктор напитка — CraftCup</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="logo">
+    <img src="images/logo.png" alt="CraftCup"><span>CraftCup</span>
+  </a>
+  <nav class="nav">
+    <a href="menu.html">Меню</a>
+    <a href="constructor.html">Конструктор</a>
+    <a href="about.html">О кофейне</a>
+  </nav>
+  <div class="header-icons">
+    <a href="cart.html" class="icon-btn" title="Корзина">
+      <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5a3 3 0 016 0v2"/></svg>
+      <span class="cart-count"></span>
+    </a>
+    <button class="icon-btn" data-profile-btn>
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+    </button>
+    <button class="burger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <section class="constructor">
+      <div class="constructor-image">
+        <img src="images/cup-hero.png" alt="Собери свой напиток">
+      </div>
+
+      <div class="constructor-panel">
+        <h2>DESIGNER</h2>
+        <hr>
+
+        <div class="option">
+          <span>Шот эспрессо:</span>
+          <div class="counter">
+            <button data-count="espresso" data-delta="-1">−</button>
+            <span id="espresso">1</span>
+            <button data-count="espresso" data-delta="1">+</button>
+          </div>
+        </div>
+
+        <div class="option">
+          <span>Шот молока:</span>
+          <div class="counter">
+            <button data-count="milk" data-delta="-1">−</button>
+            <span id="milk">0</span>
+            <button data-count="milk" data-delta="1">+</button>
+          </div>
+        </div>
+
+        <div class="option">
+          <span>Сахар:</span>
+          <div class="counter">
+            <button data-count="sugar" data-delta="-1">−</button>
+            <span id="sugar">0</span>
+            <button data-count="sugar" data-delta="1">+</button>
+          </div>
+        </div>
+
+        <div class="select-wrap">
+          <select id="syrup">
+            <option value="none|0">Сироп — без сиропа</option>
+            <option value="caramel|30">Карамель +30р.</option>
+            <option value="vanilla|30">Ваниль +30р.</option>
+            <option value="raspberry|40">Малина +40р.</option>
+            <option value="coconut|40">Кокос +40р.</option>
+            <option value="hazelnut|40">Орех +40р.</option>
+          </select>
+        </div>
+
+        <div class="select-wrap">
+          <select id="volume">
+            <option value="200|0">Объём — 200 мл</option>
+            <option value="300|40">Объём — 300 мл (+40р.)</option>
+            <option value="400|70">Объём — 400 мл (+70р.)</option>
+          </select>
+        </div>
+
+        <div class="select-wrap">
+          <select id="milkType">
+            <option value="regular|0">Молоко — обычное</option>
+            <option value="oat|40">Молоко — овсяное (+40р.)</option>
+            <option value="almond|50">Молоко — миндальное (+50р.)</option>
+            <option value="coconut|50">Молоко — кокосовое (+50р.)</option>
+          </select>
+        </div>
+
+        <div class="total-row">
+          <span class="total-label">Итого: <span class="total-value" id="totalValue">199р.</span></span>
+          <button class="btn btn-sm" id="addConstructor">В корзину</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <hr>
+  <p class="footer-text">CraftCup © 2026</p>
+</footer>
+
+<!-- АВТОРИЗАЦИЯ -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('authModal')">×</button>
+    <h3>Вход в CraftCup</h3>
+    <h4>Введите телефон и имя</h4>
+    <form id="authForm">
+      <input type="tel" id="authPhone" class="modal-input" placeholder="Номер телефона" required>
+      <input type="text" id="authName" class="modal-input" placeholder="Имя" required>
+      <div class="modal-actions"><button class="btn btn-sm" type="submit">Войти</button></div>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script src="js/menu.js"></script>
+</body>
+</html>
+
+<script src="js/main.js"></script>
+<script src="js/constructor.js"></script>
+</body>
+</html>
