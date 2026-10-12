@@ -19,12 +19,31 @@ async function loadMenu() {
   const root = document.getElementById('menuRoot');
   if (!root) return;
 
-  root.innerHTML = '<p style="text-align:center;padding:60px 0;opacity:0.6;">Загрузка меню…</p>';
+  // Показываем Lottie-лоадер
+  root.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0;">
+      <div id="lottieLoader" style="width:200px;height:200px;"></div>
+      <p style="margin-top:10px;opacity:0.6;font-size:18px;">Завариваем меню…</p>
+    </div>`;
+
+  // Запускаем анимацию
+  let anim = null;
+  if (window.lottie) {
+    anim = lottie.loadAnimation({
+      container: document.getElementById('lottieLoader'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'https://assets10.lottiefiles.com/packages/lf20_qwyqcjgc.json'
+    });
+  }
 
   try {
     menuCache = await Api.getMenu();
+    if (anim) anim.destroy();
     renderMenu(menuCache);
   } catch (e) {
+    if (anim) anim.destroy();
     root.innerHTML = `
       <p style="text-align:center;padding:60px 0;color:#b04a3a;">
         Не удалось загрузить меню.<br>

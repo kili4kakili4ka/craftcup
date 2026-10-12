@@ -198,3 +198,104 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartCount();
   updateProfileUI();
 });
+
+/* ================================================================
+   Canvas — летающие кофейные зёрна
+   ================================================================ */
+function initBeansCanvas() {
+  const canvas = document.getElementById('beansCanvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  let W, H, beans = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Создаём зёрна
+  const COUNT = 25;
+  for (let i = 0; i < COUNT; i++) {
+    beans.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 3 + Math.random() * 6,       // размер
+      dx: (Math.random() - 0.5) * 0.4, // скорость по X
+      dy: (Math.random() - 0.5) * 0.4, // скорость по Y
+      rot: Math.random() * Math.PI,
+      rotSpeed: (Math.random() - 0.5) * 0.02
+    });
+  }
+
+  function drawBean(b) {
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    ctx.rotate(b.rot);
+    ctx.beginPath();
+    // Форма зерна — эллипс
+    ctx.ellipse(0, 0, b.r * 1.4, b.r, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(61, 31, 26, 0.5)';
+    ctx.fill();
+    // Тёмная линия по центру зерна
+    ctx.beginPath();
+    ctx.moveTo(-b.r * 1.2, 0);
+    ctx.quadraticCurveTo(0, b.r * 0.4, b.r * 1.2, 0);
+    ctx.strokeStyle = 'rgba(30, 15, 10, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+
+    beans.forEach(b => {
+      b.x += b.dx;
+      b.y += b.dy;
+      b.rot += b.rotSpeed;
+
+      // Отскок от краёв
+      if (b.x < -20) b.x = W + 20;
+      if (b.x > W + 20) b.x = -20;
+      if (b.y < -20) b.y = H + 20;
+      if (b.y > H + 20) b.y = -20;
+
+      drawBean(b);
+    });
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+document.addEventListener('DOMContentLoaded', initBeansCanvas);
+
+/* ================================================================
+   Параллакс — зёрна на фоне двигаются при скролле
+   ================================================================ */
+function initParallax() {
+  // Двигаем только на главной странице
+  if (!document.querySelector('.hero')) return;
+
+  const beans = document.getElementById('beansCanvas');
+  const heroImg = document.querySelector('.hero-image img');
+  const heroText = document.querySelector('.hero-text');
+
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+
+    // Canvas уезжает вниз медленнее (эффект глубины)
+    if (beans) beans.style.transform = `translateY(${y * 0.3}px)`;
+
+    // Картинка чашки чуть-чуть двигается
+    if (heroImg) heroImg.style.transform = `translateY(${y * -0.15}px)`;
+
+    // Текст тоже плавно уходит
+    if (heroText) heroText.style.transform = `translateY(${y * 0.08}px)`;
+  }, { passive: true });
+}
+
+document.addEventListener('DOMContentLoaded', initParallax);
