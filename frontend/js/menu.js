@@ -1,9 +1,7 @@
 /* ================================================================
-   Меню — загрузка с API, рендер, попап напитка, выбор объёма,
-   добавление в корзину
+   Меню — загрузка с API, рендер, попап напитка, выбор объёма
    ================================================================ */
 
-// Объёмы для напитков с ценой "от"
 const VOLUMES = [
   { ml: 200, delta: 0,  label: '200 мл' },
   { ml: 300, delta: 40, label: '300 мл' },
@@ -14,40 +12,32 @@ let menuCache = [];
 let currentDrink = null;
 let currentVolume = null;
 
-// ---------- ЗАГРУЗКА МЕНЮ С СЕРВЕРА ----------
+// ---------- ЗАГРУЗКА МЕНЮ ----------
 async function loadMenu() {
   const root = document.getElementById('menuRoot');
   if (!root) return;
 
-  // Показываем Lottie-лоадер
+  // CSS-лоадер в виде чашки
   root.innerHTML = `
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0;">
-      <div id="lottieLoader" style="width:200px;height:200px;"></div>
-      <p style="margin-top:10px;opacity:0.6;font-size:18px;">Завариваем меню…</p>
+    <div class="menu-loader">
+      <div class="cup-loader">
+        <div class="cup-body"></div>
+        <div class="cup-handle"></div>
+        <div class="cup-steam"></div>
+        <div class="cup-steam"></div>
+        <div class="cup-steam"></div>
+      </div>
+      <p>Завариваем меню…</p>
     </div>`;
-
-  // Запускаем анимацию
-  let anim = null;
-  if (window.lottie) {
-    anim = lottie.loadAnimation({
-      container: document.getElementById('lottieLoader'),
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: 'https://assets10.lottiefiles.com/packages/lf20_qwyqcjgc.json'
-    });
-  }
 
   try {
     menuCache = await Api.getMenu();
-    if (anim) anim.destroy();
     renderMenu(menuCache);
   } catch (e) {
-    if (anim) anim.destroy();
     root.innerHTML = `
       <p style="text-align:center;padding:60px 0;color:#b04a3a;">
         Не удалось загрузить меню.<br>
-        Проверьте, запущен ли сервер (node server.js).
+        Проверьте, запущен ли сервер.
       </p>`;
   }
 }
@@ -78,20 +68,18 @@ function renderMenu(menu) {
     </section>
   `).join('');
 
-  // Сворачивание разделов
   root.querySelectorAll('[data-toggle]').forEach(h => {
     h.addEventListener('click', () => {
       h.closest('.menu-section').classList.toggle('collapsed');
     });
   });
 
-  // Клик по напитку
   root.querySelectorAll('.item').forEach(el => {
     el.addEventListener('click', () => openDrinkModal(el.dataset.id));
   });
 }
 
-// ---------- ПОИСК НАПИТКА ПО ID ----------
+// ---------- ПОИСК НАПИТКА ----------
 function findDrink(id) {
   for (const s of menuCache) {
     const item = s.items.find(i => i.id === id);
@@ -100,7 +88,7 @@ function findDrink(id) {
   return null;
 }
 
-// ---------- ОТКРЫТИЕ ПОПАПА НАПИТКА ----------
+// ---------- ПОПАП НАПИТКА ----------
 function openDrinkModal(id) {
   const drink = findDrink(id);
   if (!drink) return;
@@ -165,15 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (addBtn) {
     addBtn.addEventListener('click', () => {
       if (!currentDrink) return;
-
       const extra = currentVolume ? currentVolume.delta : 0;
       const total = currentDrink.price + extra;
-
       let displayName = currentDrink.name;
       if (currentVolume && currentDrink.priceFrom) {
         displayName += ` (${currentVolume.ml} мл)`;
       }
-
       const cartId = currentDrink.id +
         (currentVolume ? `-${currentVolume.ml}` : '');
 
