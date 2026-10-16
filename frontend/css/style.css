@@ -32,6 +32,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Запрет прокрутки страницы при открытом меню */
+body.menu-open {
+  overflow: hidden;
+}
+
 img { max-width: 100%; display: block; }
 
 a { color: inherit; text-decoration: none; }
@@ -49,6 +54,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   animation: fadeDown 0.6s ease-out;
   background: var(--bg);
 }
+
 .logo {
   display: flex;
   align-items: center;
@@ -96,18 +102,28 @@ button { font-family: inherit; cursor: pointer; border: none; }
   align-items: center;
   gap: 22px;
   position: relative;
-  z-index: 10;
+  z-index: 1005; /* Поверх выезжающего меню */
 }
+
 .icon-btn {
   background: transparent;
   padding: 4px;
   transition: transform var(--transition);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .icon-btn:hover { transform: scale(1.1); }
 
-.icon-btn svg { width: 26px; height: 26px; stroke: var(--text); fill: none; stroke-width: 1.8; }
+.icon-btn svg {
+  width: 26px;
+  height: 26px;
+  stroke: var(--text);
+  fill: none;
+  stroke-width: 1.8;
+}
 
 .cart-count {
   position: absolute;
@@ -129,19 +145,75 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 .cart-count.show { display: flex; }
 
-/* Бургер для мобильных */
+/* Бургер-кнопка (базовые стили) */
 .burger {
   display: none;
   background: transparent;
-  padding: 4px;
+  padding: 6px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1010;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 38px;
+  height: 38px;
 }
 
-.burger {
-  display: none;
-  background: transparent;
-  padding: 4px;
-  position: relative;
-  z-index: 11;
+/* Отрисовка полосок (если внутри <button class="burger"><span></span><span></span><span></span></button>) */
+.burger span {
+  display: block;
+  width: 24px;
+  height: 2.5px;
+  background-color: var(--text);
+  border-radius: 2px;
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+/* Анимация в крестик при открытии */
+.burger.open span:nth-child(1),
+.burger.active span:nth-child(1) {
+  transform: translateY(7.5px) rotate(45deg);
+}
+
+.burger.open span:nth-child(2),
+.burger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.burger.open span:nth-child(3),
+.burger.active span:nth-child(3) {
+  transform: translateY(-7.5px) rotate(-45deg);
+}
+
+/* Если в бургере используется SVG-иконка */
+.burger svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--text);
+  fill: none;
+  stroke-width: 2;
+  display: block;
+  transition: transform var(--transition);
+}
+
+/* Затемняющая подложка при открытом меню */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 24, 16, 0.45);
+  backdrop-filter: blur(3px);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition), visibility var(--transition);
+}
+
+.nav-overlay.open,
+.nav-overlay.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* ============ ОСНОВА ============ */
@@ -241,6 +313,7 @@ main { flex: 1; }
   max-width: 480px;
   filter: drop-shadow(0 30px 50px rgba(61, 31, 26, 0.2));
   animation: float 5s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* ============ МЕНЮ (страница) ============ */
@@ -512,7 +585,25 @@ main { flex: 1; }
 }
 
 /* ============ ЛИЧНЫЙ КАБИНЕТ ============ */
-.profile-page { padding: 30px 0 60px; max-width: 900px; }
+.profile-page {
+  padding: 30px 0 60px;
+  max-width: 900px;
+  position: relative;
+  z-index: 1;
+}
+
+.profile-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url('../images/coffee-beans.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: -1;
+}
 
 .profile-block { margin-bottom: 40px; }
 
@@ -557,6 +648,11 @@ main { flex: 1; }
   margin-bottom: 22px;
 }
 
+.profile-block, .divider, .profile-page > div {
+  position: relative;
+  z-index: 2;
+}
+
 /* ============ МОДАЛЬНЫЕ ОКНА ============ */
 .modal-overlay {
   position: fixed;
@@ -566,7 +662,7 @@ main { flex: 1; }
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
   padding: 20px;
   animation: fadeIn 0.3s ease-out;
 }
@@ -671,7 +767,7 @@ main { flex: 1; }
   padding: 14px 30px;
   border-radius: 10px;
   font-size: 16px;
-  z-index: 2000;
+  z-index: 3000;
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
@@ -704,91 +800,6 @@ main { flex: 1; }
   padding: 50px 0;
   max-width: 900px;
   margin: 0 auto;
-}
-
-/* ============ АНИМАЦИИ ============ */
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes fadeRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-@keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
-@keyframes modalIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-
-/* ============ АДАПТИВ ============ */
-@media (max-width: 900px) {
-  .header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: var(--bg);
-  }
-  .container { padding: 0 24px; }
-  .footer { padding: 24px; }
-
-  .nav {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 75%;
-  max-width: 320px;
-  height: 100vh;
-  background: var(--bg-soft);
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 90px 32px;
-  gap: 30px;
-  transition: right 0.4s ease;
-  z-index: 999;                 /* ← было 99, стало 999 */
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
-  font-size: 17px;
-}
-
-  .nav.open { right: 0; }
-
-  .burger { display: block; z-index: 101; }
-
-  .hero { grid-template-columns: 1fr; text-align: center; padding: 20px 0 60px; }
-  .hero-text h1 { font-size: 30px; }
-  .hero-actions { flex-direction: column; gap: 20px; }
-  .hero-actions .or { font-size: 90px; }
-  .hero-image img { max-width: 300px; }
-
-  .items-grid { grid-template-columns: repeat(2, 1fr); gap: 30px 20px; }
-  .item img { height: 140px; }
-
-  .constructor { grid-template-columns: 1fr; gap: 30px; text-align: center; }
-  .constructor-panel h2 { font-size: 40px; letter-spacing: 2px; }
-  .constructor-image img { max-width: 280px; }
-  .option { font-size: 18px; }
-
-  .cart-item {
-    grid-template-columns: 70px 1fr;
-    grid-template-areas: "img name" "counter price" "trash trash";
-    gap: 14px;
-    padding: 18px;
-  }
-  .cart-item img { grid-area: img; width: 60px; height: 60px; }
-  .cart-item-name { grid-area: name; font-size: 17px; }
-  .cart-counter { grid-area: counter; }
-  .cart-item-price { grid-area: price; text-align: right; font-size: 17px; }
-  .trash-btn { grid-area: trash; justify-self: end; }
-
-  .cart-footer { flex-direction: column; }
-  .cart-footer .total { order: -1; }
-  .cart-footer .btn { width: 100%; text-align: center; }
-
-  .about-text { grid-template-columns: 1fr; gap: 30px; }
-  .about-text p, .about-text.right-img p { text-align: center; font-size: 17px; }
-  .about-final { font-size: 18px; padding: 30px 0; }
-
-  .profile-block h2 { font-size: 22px; }
-  .field { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .field input { width: 100%; }
-  .card-row { font-size: 18px; }
-
-  .modal { padding: 28px 22px; }
 }
 
 /* ============ ВЫБОР ОБЪЁМА В ПОПАПЕ ============ */
@@ -836,30 +847,6 @@ main { flex: 1; }
   opacity: 0.85;
 }
 
-/* ============ ФОН ЛИЧНОГО КАБИНЕТА ============ */
-.profile-page {
-  position: relative;
-  z-index: 1;
-}
-
-.profile-page::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url('../images/coffee-beans.png');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-  opacity: 0.18;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.profile-block, .divider, .profile-page > div {
-  position: relative;
-  z-index: 2;
-}
-
 /* ============ КАРТЫ В ЛИЧНОМ КАБИНЕТЕ ============ */
 .cards-list {
   display: flex;
@@ -901,21 +888,6 @@ main { flex: 1; }
   padding: 20px 0;
 }
 
-/* ============ МОДАЛКА ДОБАВЛЕНИЯ КАРТЫ ============ */
-.card-form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-@media (max-width: 900px) {
-  .card-form-row { grid-template-columns: 1fr; }
-  .profile-page::before {
-    background-position: center bottom;
-    background-size: 90%;
-  }
-}
-
 /* ============ ОФОРМЛЕНИЕ ЗАКАЗА ============ */
 .checkout-summary {
   background: var(--card-bg);
@@ -952,7 +924,6 @@ main { flex: 1; }
   margin-top: 4px;
 }
 
-/* Чтобы select-wrap не растягивал нижний отступ */
 .modal .select-wrap { margin: 0 0 16px; }
 
 .checkout-card {
@@ -983,7 +954,106 @@ main { flex: 1; }
   margin-left: auto;
 }
 
-/* ============ CANVAS-ЧАСТИЦЫ (ЗЁРНА) ============ */
+/* ============ АДАПТИВ (<= 900px) ============ */
+@media (max-width: 900px) {
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--bg);
+    padding: 18px 24px;
+  }
+
+  .container { padding: 0 24px; }
+  .footer { padding: 24px; }
+
+  /* Навигация в виде выезжающего меню справа */
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 78%;
+    max-width: 320px;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--bg-soft);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 85px 32px 40px;
+    gap: 24px;
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+    font-size: 18px;
+    overflow-y: auto;
+  }
+
+  /* Открытие меню */
+  .nav.open,
+  .nav.active {
+    right: 0;
+  }
+
+  .nav a {
+    width: 100%;
+    padding: 8px 0;
+  }
+
+  /* Бургер становится видимым */
+  .burger {
+    display: flex;
+  }
+
+  .hero { grid-template-columns: 1fr; text-align: center; padding: 20px 0 60px; }
+  .hero-text h1 { font-size: 30px; }
+  .hero-actions { flex-direction: column; gap: 20px; }
+  .hero-actions .or { font-size: 90px; }
+  .hero-image img { max-width: 300px; }
+
+  .items-grid { grid-template-columns: repeat(2, 1fr); gap: 30px 20px; }
+  .item img { height: 140px; }
+
+  .constructor { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+  .constructor-panel h2 { font-size: 40px; letter-spacing: 2px; }
+  .constructor-image img { max-width: 280px; }
+  .option { font-size: 18px; }
+
+  .cart-item {
+    grid-template-columns: 70px 1fr;
+    grid-template-areas: "img name" "counter price" "trash trash";
+    gap: 14px;
+    padding: 18px;
+  }
+  .cart-item img { grid-area: img; width: 60px; height: 60px; }
+  .cart-item-name { grid-area: name; font-size: 17px; }
+  .cart-counter { grid-area: counter; }
+  .cart-item-price { grid-area: price; text-align: right; font-size: 17px; }
+  .trash-btn { grid-area: trash; justify-self: end; }
+
+  .cart-footer { flex-direction: column; }
+  .cart-footer .total { order: -1; }
+  .cart-footer .btn { width: 100%; text-align: center; }
+
+  .about-text { grid-template-columns: 1fr; gap: 30px; }
+  .about-text p, .about-text.right-img p { text-align: center; font-size: 17px; }
+  .about-final { font-size: 18px; padding: 30px 0; }
+
+  .profile-block h2 { font-size: 22px; }
+  .field { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .field input { width: 100%; }
+  .card-row { font-size: 18px; }
+
+  .modal { padding: 28px 22px; }
+
+  .card-form-row { grid-template-columns: 1fr; }
+  .profile-page::before {
+    background-position: center bottom;
+    background-size: 90%;
+  }
+}
+
+/* ============ CANVAS И СЛОИ КОНТЕНТА ============ */
 #beansCanvas {
   position: fixed;
   inset: 0;
@@ -994,20 +1064,15 @@ main { flex: 1; }
   opacity: 0.7;
 }
 
-/* Весь контент поверх canvas */
-.header, main, .footer {
+/* Контент поверх canvas (шапка остается 1000) */
+main,
+.footer,
+.container {
   position: relative;
   z-index: 1;
 }
 
-.hero-image img {
-  max-width: 480px;
-  filter: drop-shadow(0 30px 50px rgba(61, 31, 26, 0.2));
-  animation: float 5s ease-in-out infinite;
-  will-change: transform;   /* ← добавь эту строку */
-}
-
-/* ============ ЛОАДЕР МЕНЮ (CSS-ЧАШКА) ============ */
+/* ============ ЛОАДЕР МЕНЮ ============ */
 .menu-loader {
   display: flex;
   flex-direction: column;
@@ -1083,34 +1148,24 @@ main { flex: 1; }
 .cup-steam:nth-child(4) { left: 32px; animation-delay: 0.4s; }
 .cup-steam:nth-child(5) { left: 49px; animation-delay: 0.8s; }
 
+/* ============ АНИМАЦИИ ============ */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+@keyframes modalIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 @keyframes cupBounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
-
 @keyframes coffeeFill {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
 }
-
 @keyframes steamRise {
   0% { transform: translateY(0) scaleY(1); opacity: 0.5; }
   100% { transform: translateY(-30px) scaleY(0.4); opacity: 0; }
-}
-
-/* ============ Z-INDEX — КОНТЕНТ ПОД ШАПКОЙ ============ */
-main,
-.container {
-  position: relative;
-  z-index: 1;
-}
-
-/* Модалки — всегда поверх всего */
-.modal-overlay {
-  z-index: 2000;
-}
-
-/* Уведомления — самые верхние */
-.toast {
-  z-index: 3000;
 }
